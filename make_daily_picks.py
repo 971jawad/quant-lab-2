@@ -171,4 +171,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit("Retired legacy export. Use python run_quant_lab2.py for dated targets and simulated fills; see AUDIT.md.")

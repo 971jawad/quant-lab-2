@@ -149,7 +149,7 @@ def risk_engine(book_ret):
     return pd.Series(out, index=book_ret.index), events
 
 
-def main():
+def legacy_main():
     print("=" * 78)
     print("ENSEMBLER — production build")
     print("=" * 78)
@@ -286,6 +286,12 @@ def main():
         f.write(json.dumps({"phase": "ensembler_production",
                             "n_configs": 1, "note": "deployment build"}) + "\n")
     print("\n  wrote research/ensembler_positions.json + ensembler_daily.csv")
+
+
+def main():
+    """Quant Lab 2: rebuild from the audited engine."""
+    from run_quant_lab2 import build
+    return build()
 
 
 if __name__ == "__main__":

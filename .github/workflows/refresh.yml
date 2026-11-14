@@ -1,104 +1,48 @@
-name: refresh dashboard
-
-# Refreshes the free data sources (CFTC positioning, FRED macro, Yahoo prices),
-# regenerates the ENSEMBLER signals and rebuilds the GitHub Pages dashboard.
-#
-# NOTE: this computes and publishes SIGNALS ONLY. It does not connect to a
-# broker and places no orders.
-#
-# Prices ARE refreshed here: run_live_update.py rebuilds ET-day bars from Yahoo
-# HOURLY data (matching the HistData bar convention - naive daily bars break FX
-# return alignment) and refuses to append if the overlap correlation degrades.
-# The deep 15-minute HistData archive is only needed for re-running research;
-# extend it locally with `python run_data_15m.py`.
-
+name: Refresh Quant Lab 2 research
 on:
   schedule:
-    - cron: "0 23 * * 1-5"      # weekdays, after the US close
-  workflow_dispatch:             # manual trigger
-
+    - cron: '0 6 * * 1-6'  # after the entire previous ET calendar day has closed
+  workflow_dispatch:
 permissions:
   contents: write
-
 concurrency:
-  group: refresh
-  cancel-in-progress: true
-
+  group: quant-lab-2-refresh
+  cancel-in-progress: false
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.12'
           cache: pip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Refresh CFTC Commitments of Traders
+      - run: pip install -r requirements-lock.txt
+      - run: python -m pytest -q
+      - name: Refresh prices (preserve prior data on individual failures)
+        id: prices
         continue-on-error: true
-        run: |
-          mkdir -p data/external/cot
-          for y in $(seq 2010 $(date +%Y)); do
-            curl -sfL -o "data/external/cot/deacot$y.zip" \
-              "https://www.cftc.gov/files/dea/history/deacot$y.zip" || true
-          done
-          ls -la data/external/cot | tail -3
-
-      - name: Refresh FRED macro series
+        run: python run_live_update.py
+      - name: Refresh consumed COT table
+        id: cot
         continue-on-error: true
+        run: python run_refresh_cot.py
+      - name: Rebuild and verify, including degraded feed status
         run: |
-          for s in DFII10 DGS10 VIXCLS DTWEXBGS VXVCLS DTB3; do
-            curl -sfL -o "data/external/$s.csv" \
-              "https://fred.stlouisfed.org/graph/fredgraph.csv?id=$s" || true
-          done
-
-      - name: Refresh LIVE prices (Yahoo hourly -> ET-day bars)
+          python run_quant_lab2.py --record-snapshot
+          python verify_quant_lab2.py
+      - name: Commit current research report
         run: |
-          python run_live_update.py
-          cat research/live_feed.json
-
-      - name: Rebuild legs whose source froze
-        run: python run_relive.py | tail -12
-
-      - name: Recompute signals and trade details
-        run: |
-          python run_ensembler.py | tail -25
-          python make_trade_details.py | tail -15
-
-      - name: Refresh daily picks and the live trade ledger
-        run: |
-          python make_daily_picks.py | tail -20
-          python make_live_trades.py | tail -20
-
-      - name: Attribute live P&L by leg
-        run: python run_attribution.py | tail -18
-
-      - name: Verify integrity and separate track records
-        run: python run_verify.py
-
-      - name: Monitor live edge decay
-        run: python run_decay_monitor.py
-
-      - name: Rebuild dashboard payload
-        run: |
-          python build_site.py
-          echo "--- generated ---"
-          head -c 400 docs/data.json
-
-      - name: Commit refreshed dashboard
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A docs/data.json data/live research results3/lowfreq_daily data/external
-          if git diff --staged --quiet; then
-            echo "no changes to commit"
-          else
-            git commit -m "chore: refresh live data and signals [skip ci]"
-            git pull --rebase --autostash origin master || true
-            git push origin HEAD:master
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/data.json data/live data/external/cot_weekly.csv research/live_feed.json research/cot_feed.json research/forward_snapshots
+          if ! git diff --staged --quiet; then
+            git commit -m 'chore: refresh Quant Lab 2 research report'
+            git push origin "HEAD:$GITHUB_REF_NAME"
           fi
+      - name: Surface source failures
+        if: steps.prices.outcome == 'failure' || steps.cot.outcome == 'failure'
+        run: |
+          echo 'At least one source failed validation. The dashboard records degraded status; inspect its feed details.'
+          exit 1

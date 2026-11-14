@@ -17,3 +17,6 @@ data/external/cot/*.zip
 
 # compact daily series + live extension ARE tracked (CI needs them)
 !data/daily/
+.venv/
+.pytest_cache/
+artifacts/

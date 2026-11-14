@@ -29,6 +29,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yfinance as yf
+from qlab.production import completed_bars, validate_bars
 
 ROOT = Path(__file__).parent
 LIVE = ROOT / "data" / "live"
@@ -88,7 +89,34 @@ def yahoo_et_daily(symbol):
     out = pd.DataFrame({"open": g["open"].first(), "high": g["high"].max(),
                         "low": g["low"].min(), "close": g["close"].last()}).dropna()
     out.index = out.index.tz_localize(None).normalize()
-    return out
+    return completed_bars(out)
+
+
+def append_closed_extension(path, incoming, now=None):
+    """Never rewrite completed history or truncate it to Yahoo's rolling window."""
+    incoming = completed_bars(validate_bars(incoming), now)
+    if incoming.empty:
+        raise ValueError("No completed extension bars")
+    original_text = None
+    if path.exists():
+        original_text = path.read_text()
+        original = validate_bars(pd.read_csv(path, index_col=0, parse_dates=True, float_precision="round_trip"))
+        old = completed_bars(original, now)
+        added = incoming[incoming.index > old.index[-1]] if len(old) else incoming
+        if len(old) and len(added) and (added.index[0] - old.index[-1]).days > 7:
+            raise ValueError("Refusing an unexplained gap in the live extension")
+        incoming = pd.concat([old, added])
+    temp = path.with_suffix(".tmp")
+    validate_bars(incoming)
+    if original_text is not None and len(old) == len(original):
+        # Keep the original bytes, avoiding repeated CSV float round trips.
+        if added.empty:
+            return incoming
+        temp.write_text(original_text.rstrip("\n") + "\n" + added.to_csv(header=False))
+    else:
+        incoming.to_csv(temp)
+    temp.replace(path)
+    return incoming
 
 
 def main():
@@ -99,10 +127,16 @@ def main():
             hist = hist_daily(inst)
         except Exception as e:
             print(f"  {inst:8} SKIP (no base history: {str(e)[:40]})")
+            report.append({"market": inst, "status": "failed", "reason": str(e)[:160]})
             continue
-        y = yahoo_et_daily(sym)
+        try:
+            y = yahoo_et_daily(sym)
+        except Exception as e:
+            report.append({"market": inst, "status": "failed", "reason": str(e)[:160]})
+            continue
         if y is None or y.empty:
             print(f"  {inst:8} SKIP (no Yahoo data for {sym})")
+            report.append({"market": inst, "status": "failed", "reason": "empty Yahoo response"})
             continue
 
         j = pd.concat([hist["close"], y["close"]], axis=1,
@@ -110,7 +144,11 @@ def main():
         src = "hourly->ET-day"
         if len(j) < MIN_OVERLAP:
             # hourly could not reach back far enough; verify against daily instead
-            y2 = yahoo_daily_fallback(sym)
+            try:
+                y2 = yahoo_daily_fallback(sym)
+            except Exception as e:
+                report.append({"market": inst, "status": "failed", "reason": str(e)[:160]})
+                continue
             if y2 is not None and not y2.empty:
                 j2 = pd.concat([hist["close"], y2["close"]], axis=1,
                                keys=["h", "y"]).dropna()
@@ -151,22 +189,42 @@ def main():
                            "hist_end": str(hist.index[-1].date()),
                            "corr": round(corr, 3)})
             continue
-        new.to_csv(LIVE / f"{inst}_ext.csv")
-        print(f"  {inst:8} +{len(new):>3} bars -> {new.index[-1].date()}  "
+        try:
+            path = LIVE / f"{inst}_ext.csv"
+            previous_count = 0
+            # Keep already-published levels immutable. Anchor subsequent bars
+            # to the existing extension, rather than revising its entire past.
+            if path.exists():
+                previous = validate_bars(pd.read_csv(path, index_col=0, parse_dates=True))
+                previous_count = len(previous)
+                overlap = previous.index.intersection(new.index)
+                if not len(overlap):
+                    raise ValueError("No overlap with existing live extension")
+                anchor = overlap[-1]
+                new = new * (previous.loc[anchor, "close"] / new.loc[anchor, "close"])
+            new = append_closed_extension(path, new)
+            added = len(new) - previous_count
+        except ValueError as e:
+            report.append({"market": inst, "status": "refused", "reason": str(e)})
+            continue
+        print(f"  {inst:8} +{added:>3} bars -> {new.index[-1].date()}  "
               f"(corr {corr:.3f}, raw level diff {lvl:.2f}%, x{adj:.4f} adj, {src})")
-        report.append({"market": inst, "status": "extended", "added": len(new),
+        report.append({"market": inst, "status": "extended" if added else "current", "added": added,
+                       "extension_bars": len(new),
                        "hist_end": str(hist.index[-1].date()),
                        "live_end": str(new.index[-1].date()),
                        "corr": round(corr, 3), "level_diff_pct": round(lvl, 3),
                        "level_adjustment": round(adj, 5), "overlap_source": src})
 
-    (ROOT / "research" / "live_feed.json").write_text(
-        json.dumps({"checked_utc": pd.Timestamp.now(tz="UTC").isoformat(),
+    report_path = ROOT / "research" / "live_feed.json"
+    temp = report_path.with_suffix(".tmp")
+    temp.write_text(json.dumps({"checked_utc": pd.Timestamp.now(tz="UTC").isoformat(),
                     "min_corr_guard": MIN_CORR, "markets": report},
                    indent=2, default=str))
+    temp.replace(report_path)
     ok = sum(1 for r in report if r["status"] in ("extended", "current"))
     print(f"\n{ok}/{len(YMAP)} markets healthy -> research/live_feed.json")
-    return 0 if ok else 1
+    return 0 if ok == len(YMAP) else 1
 
 
 if __name__ == "__main__":

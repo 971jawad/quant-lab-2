@@ -21,7 +21,7 @@ def deflated_sharpe(daily_ret: pd.Series, n_trials: int) -> float:
     """Bailey & Lopez de Prado: probability the true Sharpe > 0 after accounting
     for having tried n_trials strategies (expected max of null Sharpes)."""
     r = daily_ret.dropna()
-    if len(r) < 60:
+    if len(r) < 60 or r.std() <= 1e-12:
         return np.nan
     sr0 = r.mean() / (r.std() + 1e-12)
     sk = float(stats.skew(r))
@@ -47,17 +47,21 @@ def deflated_sharpe(daily_ret: pd.Series, n_trials: int) -> float:
 def full_metrics(trades_R=None, daily_ret: pd.Series | None = None,
                  n_trials: int = 1, periods_per_year: int = 252) -> dict:
     out = {}
+    if not np.isfinite(periods_per_year) or periods_per_year <= 0:
+        raise ValueError("periods_per_year must be positive and finite")
 
     # ---------------- equity-curve family (needs daily returns) ----------------
     if daily_ret is not None:
         r = pd.Series(daily_ret).dropna()
+        if not np.isfinite(r).all() or (r <= -1).any():
+            raise ValueError("Returns must be finite and greater than -100%")
         if len(r) >= 30:
             eq = (1 + r).cumprod()
             n = len(r)
             total = float(eq.iloc[-1] - 1)
             PY = periods_per_year
             cagr = float(eq.iloc[-1] ** (PY / n) - 1)
-            peak = eq.cummax()
+            peak = eq.cummax().clip(lower=1.0)
             dd = eq / peak - 1
             max_dd = float(dd.min())
             out.update({
@@ -70,9 +74,9 @@ def full_metrics(trades_R=None, daily_ret: pd.Series | None = None,
                 "pct_time_underwater": round(float((dd < 0).mean()) * 100, 1),
                 "n_days": n,
             })
-            downside = r[r < 0]
-            out["sortino"] = round(float(r.mean() / (downside.std() + 1e-12)
-                                         * np.sqrt(PY)), 2) if len(downside) > 5 else None
+            downside_deviation = np.sqrt(np.minimum(r, 0).pow(2).mean())
+            out["sortino"] = round(float(r.mean() / downside_deviation
+                                         * np.sqrt(PY)), 2) if downside_deviation > 0 else None
             # longest peak-to-recovery stretch, in trading days
             under, longest, cur = dd < -1e-12, 0, 0
             for u in under.values:
@@ -80,14 +84,15 @@ def full_metrics(trades_R=None, daily_ret: pd.Series | None = None,
                 longest = max(longest, cur)
             out["max_recovery_days"] = int(longest)
             # rolling Sharpe stability: 1y window, report mean/min and last-vs-first half
-            if n >= 504:
-                roll = r.rolling(252).apply(
-                    lambda x: x.mean() / (x.std() + 1e-12) * np.sqrt(252), raw=True).dropna()
+            year = max(2, int(round(PY)))
+            if n >= 2 * year:
+                roll = r.rolling(year).mean() / (r.rolling(year).std() + 1e-12) * np.sqrt(PY)
+                roll = roll.dropna()
                 out["rolling_sharpe_min"] = round(float(roll.min()), 2)
                 out["rolling_sharpe_frac_positive"] = round(float((roll > 0).mean()), 2)
             half = n // 2
-            s1 = r.iloc[:half].mean() / (r.iloc[:half].std() + 1e-12) * np.sqrt(252)
-            s2 = r.iloc[half:].mean() / (r.iloc[half:].std() + 1e-12) * np.sqrt(252)
+            s1 = r.iloc[:half].mean() / (r.iloc[:half].std() + 1e-12) * np.sqrt(PY)
+            s2 = r.iloc[half:].mean() / (r.iloc[half:].std() + 1e-12) * np.sqrt(PY)
             out["sharpe_first_half"] = round(float(s1), 2)
             out["sharpe_second_half"] = round(float(s2), 2)
             out["t_stat_daily"] = round(float(r.mean() / (r.std() + 1e-12) * np.sqrt(n)), 2)
@@ -97,6 +102,10 @@ def full_metrics(trades_R=None, daily_ret: pd.Series | None = None,
     if trades_R is not None and len(trades_R) > 0:
         R = np.asarray(trades_R, dtype=float)
         R = R[~np.isnan(R)]
+        if len(R) == 0:
+            return out
+        if not np.isfinite(R).all():
+            raise ValueError("Trade returns must be finite")
         wins, losses = R[R > 0], R[R <= 0]
         out.update({
             "n_trades": int(len(R)),

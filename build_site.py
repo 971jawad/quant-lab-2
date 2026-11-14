@@ -115,7 +115,7 @@ def validate_dashboard_js():
     print("  dashboard JS syntax: OK")
 
 
-def main():
+def legacy_main():
     DOCS.mkdir(exist_ok=True)
     ens = load_curve("ensembler_daily.csv")
     champ = load_curve("champion_v12_daily.csv")
@@ -192,6 +192,12 @@ def main():
     print(f"wrote docs/data.json  ({len(json.dumps(payload))} bytes)")
     print(f"  positions: {len(payload['positions'].get('positions', []))}")
     print(f"  curve points: {len(payload['curves']['ensembler'])}")
+
+
+def main():
+    """Quant Lab 2: rebuild from the audited engine."""
+    from run_quant_lab2 import build
+    return build()
 
 
 if __name__ == "__main__":

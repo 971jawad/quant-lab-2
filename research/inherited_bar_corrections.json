@@ -1,0 +1,98 @@
+[
+  {
+    "market": "ES",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 7362.1041904625,
+        "high": 7440.5542706356,
+        "low": 7323.2527221863,
+        "close": 7375.8018235086
+      }
+    ],
+    "local_rows_rebuilt": 7
+  },
+  {
+    "market": "EURUSD",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 1.1197148685,
+        "high": 1.1199657241,
+        "low": 1.113230877,
+        "close": 1.1139752209
+      }
+    ],
+    "local_rows_rebuilt": 7
+  },
+  {
+    "market": "JPXJPY",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 57457.9583884102,
+        "high": 57721.3944336809,
+        "low": 57087.2115902315,
+        "close": 57399.528568042
+      }
+    ],
+    "local_rows_rebuilt": 7
+  },
+  {
+    "market": "MNQ",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 26896.3003833485,
+        "high": 27299.9514429702,
+        "low": 26682.7784294919,
+        "close": 26983.8991336486
+      }
+    ],
+    "local_rows_rebuilt": 7
+  },
+  {
+    "market": "USDJPY",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 157.8580041254,
+        "high": 158.6530023066,
+        "low": 157.6860070525,
+        "close": 158.4250054769
+      }
+    ],
+    "local_rows_rebuilt": 7
+  },
+  {
+    "market": "XAUUSD",
+    "source_commit": "943f322",
+    "source_checked_utc": "2026-11-07T02:33:56.150942+00:00",
+    "reason": "Latest imported ET-day bar was written before its day completed; later local appended bars were anchored to that provisional close. Rebuild from last completed inherited bar.",
+    "removed_provisional_rows": [
+      {
+        "Datetime": "2026-11-06T00:00:00.000",
+        "open": 4037.2501676125,
+        "high": 4074.200381303,
+        "low": 4018.8247861487,
+        "close": 4063.0456043994
+      }
+    ],
+    "local_rows_rebuilt": 7
+  }
+]

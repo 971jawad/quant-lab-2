@@ -202,7 +202,7 @@ def audit(ls):
     return checks
 
 
-def main():
+def legacy_main():
     ls = live_start()
     if ls is None:
         print("no live extension found - run run_live_update.py first")
@@ -242,6 +242,12 @@ def main():
     print("\n" + ("*** ALL CHECKS PASSED ***" if not fails
                   else f"*** {len(fails)} CHECK(S) FAILED ***"))
     return 1 if fails else 0
+
+
+def main():
+    from verify_quant_lab2 import verify
+    verify()
+    return 0
 
 
 if __name__ == "__main__":

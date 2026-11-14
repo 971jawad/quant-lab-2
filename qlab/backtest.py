@@ -36,9 +36,11 @@ def bt_trades(o: np.ndarray, h: np.ndarray, l: np.ndarray, c: np.ndarray,
         e = i + 1
         if e >= n:
             continue
-        open_exits = [x for x in open_exits if x > e]
+        open_exits = [x for x in open_exits if x >= e]
         if len(open_exits) >= max_concurrent:
             continue
+        if (o[e] - stop) * d <= 0:
+            continue                   # raw open has already crossed the stop
         entry = o[e] + d * half
         dist = (entry - stop) * d
         if dist <= 0:                   # gapped through the stop -> stand aside
@@ -50,25 +52,25 @@ def bt_trades(o: np.ndarray, h: np.ndarray, l: np.ndarray, c: np.ndarray,
         be_level = entry + d * be_r * dist if not np.isnan(be_r) else None
         be_armed = False
         exit_i, exit_px, reason = None, None, None
-        last = min(e + time_exit, n - 1)
+        last = min(e + max(time_exit, 1) - 1, n - 1)
         for j in range(e, last + 1):
             if d == 1:
                 if l[j] <= cur_stop:
-                    exit_i, exit_px, reason = j, cur_stop - half, "stop"
+                    exit_i, exit_px, reason = j, min(o[j], cur_stop) - half, "stop"
                     break
                 if h[j] > target:
                     exit_i, exit_px, reason = j, target, "target"
                     break
             else:
                 if h[j] >= cur_stop:
-                    exit_i, exit_px, reason = j, cur_stop + half, "stop"
+                    exit_i, exit_px, reason = j, max(o[j], cur_stop) + half, "stop"
                     break
                 if l[j] < target:
                     exit_i, exit_px, reason = j, target, "target"
                     break
             # arm break-even only AFTER a bar closes past +be_r*R (no intrabar peek)
             if be_level is not None and not be_armed:
-                fav = h[j] if d == 1 else l[j]
+                fav = c[j]
                 if (fav - be_level) * d >= 0:
                     cur_stop, be_armed = entry, True
         if exit_i is None:
@@ -93,10 +95,9 @@ def simulate(trades: pd.DataFrame, et_date: np.ndarray, risk_pct: float,
         return {"n_trades": 0}
     ev = []
     for seq, t in enumerate(trades.itertuples(index=False)):
-        # exits of other trades process before new entries on the same bar,
-        # but a zero-duration trade must still run entry -> exit
+        # Entries occur at the open; intrabar/time exits are not known yet.
         ev.append(((t.entry_i, 1, seq), 1, t))
-        exit_order = 2 if t.exit_i == t.entry_i else 0
+        exit_order = 2
         ev.append(((t.exit_i, exit_order, seq), 0, t))
     ev.sort(key=lambda x: x[0])
     ev = [(k[0], kind, t) for k, kind, t in ev]
@@ -154,7 +155,8 @@ def simulate(trades: pd.DataFrame, et_date: np.ndarray, risk_pct: float,
     all_days = pd.Index(sorted(set(et_date)))
     span = all_days[(all_days >= ev_days.index[0]) & (all_days <= ev_days.index[-1])]
     ds = ev_days.reindex(span).ffill()
-    dret = ds.pct_change().dropna()
+    dret = ds.pct_change()
+    dret.iloc[0] = ds.iloc[0] / start_eq - 1
     n_days = max(len(ds), 2)
     r_all = np.array(taken_R)
     wins = r_all[r_all > 0]
@@ -168,7 +170,7 @@ def simulate(trades: pd.DataFrame, et_date: np.ndarray, risk_pct: float,
     calmar = round(ann_return_pct / abs(max_dd * 100), 2) if max_dd < 0 else None
     extra = {}
     if want_daily:
-        dr = ds.pct_change().dropna()
+        dr = dret.copy()
         dr.index = pd.to_datetime(dr.index)
         extra["daily_returns"] = dr
     return {
