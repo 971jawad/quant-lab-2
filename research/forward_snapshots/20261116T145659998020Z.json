@@ -1,0 +1,92 @@
+{
+  "generated_utc": "2026-11-16T14:56:59.998020+00:00",
+  "data_as_of": "2026-11-15",
+  "input_and_engine_sha256": "212780b3895c62175deb8e99f6e971d8a3bff9aa7c0577b1af5ff71a340a6d2d",
+  "positions": [
+    {
+      "market": "XAUUSD",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 160,
+      "direction": -1.0,
+      "next_open_exposure": -0.35501929726961917,
+      "side": "SHORT",
+      "last_close": 3854.4903028233603,
+      "status": "READY"
+    },
+    {
+      "market": "MNQ",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 160,
+      "direction": 0.0,
+      "next_open_exposure": 0.0,
+      "side": "FLAT",
+      "last_close": 27679.70470951389,
+      "status": "READY"
+    },
+    {
+      "market": "ES",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": 1.0,
+      "next_open_exposure": 0.15591044795117595,
+      "side": "LONG",
+      "last_close": 7524.22887174225,
+      "status": "READY"
+    },
+    {
+      "market": "EURUSD",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": -1.0,
+      "next_open_exposure": -0.07776475100264807,
+      "side": "SHORT",
+      "last_close": 1.1018201053838983,
+      "status": "READY"
+    },
+    {
+      "market": "USDJPY",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 80,
+      "direction": 1.0,
+      "next_open_exposure": 0.04497778139811739,
+      "side": "LONG",
+      "last_close": 159.60000854663463,
+      "status": "READY"
+    },
+    {
+      "market": "WTIUSD",
+      "as_of": "2023-12-01",
+      "age_days": 1081,
+      "fresh": false,
+      "lookback": 240,
+      "direction": -1.0,
+      "next_open_exposure": 0.0,
+      "side": "FLAT",
+      "last_close": 74.362,
+      "status": "STALE / NO NEW TARGET"
+    },
+    {
+      "market": "JPXJPY",
+      "as_of": "2026-11-15",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": 1.0,
+      "next_open_exposure": 0.049578337361789834,
+      "side": "LONG",
+      "last_close": 59898.103445282024,
+      "status": "READY"
+    }
+  ],
+  "operational": "DEGRADED"
+}
