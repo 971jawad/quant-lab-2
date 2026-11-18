@@ -1,0 +1,92 @@
+{
+  "generated_utc": "2026-11-18T15:12:53.211820+00:00",
+  "data_as_of": "2026-11-17",
+  "input_and_engine_sha256": "5d3fbda31e8a44a36c55c2de159327507a79232974cddc653dc7e9b1cd0e4fe0",
+  "positions": [
+    {
+      "market": "XAUUSD",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 160,
+      "direction": -1.0,
+      "next_open_exposure": -0.34569607288500875,
+      "side": "SHORT",
+      "last_close": 3771.526239277002,
+      "status": "READY"
+    },
+    {
+      "market": "MNQ",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 160,
+      "direction": 0.0,
+      "next_open_exposure": 0.0,
+      "side": "FLAT",
+      "last_close": 27057.311392437157,
+      "status": "READY"
+    },
+    {
+      "market": "ES",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": 1.0,
+      "next_open_exposure": 0.13243213604028184,
+      "side": "LONG",
+      "last_close": 7344.173350136662,
+      "status": "READY"
+    },
+    {
+      "market": "EURUSD",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": -1.0,
+      "next_open_exposure": -0.07363316333047774,
+      "side": "SHORT",
+      "last_close": 1.0989132789211564,
+      "status": "READY"
+    },
+    {
+      "market": "USDJPY",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 80,
+      "direction": 1.0,
+      "next_open_exposure": 0.05630996401102245,
+      "side": "LONG",
+      "last_close": 159.15700011700162,
+      "status": "READY"
+    },
+    {
+      "market": "WTIUSD",
+      "as_of": "2023-12-01",
+      "age_days": 1083,
+      "fresh": false,
+      "lookback": 240,
+      "direction": -1.0,
+      "next_open_exposure": 0.0,
+      "side": "FLAT",
+      "last_close": 74.362,
+      "status": "STALE / NO NEW TARGET"
+    },
+    {
+      "market": "JPXJPY",
+      "as_of": "2026-11-17",
+      "age_days": 1,
+      "fresh": true,
+      "lookback": 240,
+      "direction": 1.0,
+      "next_open_exposure": 0.04752463417718362,
+      "side": "LONG",
+      "last_close": 58968.05739270144,
+      "status": "READY"
+    }
+  ],
+  "operational": "DEGRADED"
+}
