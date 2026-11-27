@@ -1,9 +1,9 @@
 {
   "project": "Quant Lab 2",
   "schema_version": 2,
-  "generated_utc": "2026-11-26T16:30:00.434380+00:00",
-  "data_as_of": "2026-11-25",
-  "input_and_engine_sha256": "08e9593d140633781355c9911d0e7818a5274dafd73e67397a2e4d46f88e3a48",
+  "generated_utc": "2026-11-27T16:15:21.879984+00:00",
+  "data_as_of": "2026-11-26",
+  "input_and_engine_sha256": "4becc2aa9594d99d694a700cf24e226b92c445db3c3d096eb51cee57a497637c",
   "mode": "RESEARCH SIMULATION",
   "operational": "DEGRADED",
   "execution": "Decision at completed ET-day close; simulated fill at next available bar open. Not necessarily midnight and not a broker quote.",
@@ -28,38 +28,38 @@
       "DSR_prob_true_SR_gt_0": 0.0001
     },
     "reused_evaluation": {
-      "total_return_pct": 45.9,
+      "total_return_pct": 45.95,
       "cagr_pct": 8.97,
       "max_dd_pct": -16.28,
       "calmar": 0.55,
       "ann_vol_pct": 9.02,
       "sharpe": 1.0,
       "pct_time_underwater": 92.2,
-      "n_days": 1377,
+      "n_days": 1378,
       "sortino": 1.42,
-      "max_recovery_days": 258,
+      "max_recovery_days": 259,
       "rolling_sharpe_min": -0.36,
       "rolling_sharpe_frac_positive": 0.99,
-      "sharpe_first_half": 0.79,
-      "sharpe_second_half": 1.18,
+      "sharpe_first_half": 0.8,
+      "sharpe_second_half": 1.17,
       "t_stat_daily": 2.09,
-      "DSR_prob_true_SR_gt_0": 0.0599
+      "DSR_prob_true_SR_gt_0": 0.0601
     },
     "full": {
-      "total_return_pct": 41.25,
+      "total_return_pct": 41.3,
       "cagr_pct": 2.57,
       "max_dd_pct": -20.9,
       "calmar": 0.12,
       "ann_vol_pct": 7.7,
       "sharpe": 0.37,
       "pct_time_underwater": 97.4,
-      "n_days": 4267,
+      "n_days": 4268,
       "sortino": 0.5,
       "max_recovery_days": 2950,
       "rolling_sharpe_min": -2.12,
       "rolling_sharpe_frac_positive": 0.62,
-      "sharpe_first_half": -0.17,
-      "sharpe_second_half": 0.79,
+      "sharpe_first_half": -0.18,
+      "sharpe_second_half": 0.8,
       "t_stat_daily": 1.36,
       "DSR_prob_true_SR_gt_0": 0.0112
     }
@@ -68,11 +68,11 @@
     {
       "market": "XAUUSD",
       "as_of": "2026-11-25",
-      "age_days": 1,
+      "age_days": 2,
       "fresh": true,
       "lookback": 160,
       "direction": -1.0,
-      "next_open_exposure": -0.2686287955121349,
+      "next_open_exposure": -0.2795985999781701,
       "side": "SHORT",
       "last_close": 3605.797256866227,
       "status": "READY"
@@ -80,11 +80,11 @@
     {
       "market": "MNQ",
       "as_of": "2026-11-25",
-      "age_days": 1,
+      "age_days": 2,
       "fresh": true,
       "lookback": 160,
       "direction": 0.0,
-      "next_open_exposure": 0.0584507382337947,
+      "next_open_exposure": 0.06083764976387738,
       "side": "LONG",
       "last_close": 26269.178791404756,
       "status": "READY"
@@ -92,43 +92,43 @@
     {
       "market": "ES",
       "as_of": "2026-11-25",
-      "age_days": 1,
+      "age_days": 2,
       "fresh": true,
       "lookback": 240,
       "direction": 1.0,
-      "next_open_exposure": 0.043047346262678456,
+      "next_open_exposure": 0.04480524034988164,
       "side": "LONG",
       "last_close": 7219.90266510044,
       "status": "READY"
     },
     {
       "market": "EURUSD",
-      "as_of": "2026-11-25",
+      "as_of": "2026-11-26",
       "age_days": 1,
       "fresh": true,
       "lookback": 240,
       "direction": -1.0,
-      "next_open_exposure": -0.06625602384674888,
+      "next_open_exposure": -0.0693580087539992,
       "side": "SHORT",
-      "last_close": 1.0959015817103324,
+      "last_close": 1.097104258516744,
       "status": "READY"
     },
     {
       "market": "USDJPY",
-      "as_of": "2026-11-25",
+      "as_of": "2026-11-26",
       "age_days": 1,
       "fresh": true,
       "lookback": 80,
-      "direction": -1.0,
-      "next_open_exposure": -0.05565082778454332,
-      "side": "SHORT",
-      "last_close": 159.17100768557546,
+      "direction": 1.0,
+      "next_open_exposure": 0.06008181950632637,
+      "side": "LONG",
+      "last_close": 159.28000121751737,
       "status": "READY"
     },
     {
       "market": "WTIUSD",
       "as_of": "2023-12-01",
-      "age_days": 1091,
+      "age_days": 1092,
       "fresh": false,
       "lookback": 240,
       "direction": -1.0,
@@ -139,60 +139,60 @@
     },
     {
       "market": "JPXJPY",
-      "as_of": "2026-11-25",
+      "as_of": "2026-11-26",
       "age_days": 1,
       "fresh": true,
       "lookback": 240,
       "direction": 1.0,
-      "next_open_exposure": 0.039813749587236394,
+      "next_open_exposure": 0.041351391123152434,
       "side": "LONG",
-      "last_close": 57853.399508772425,
+      "last_close": 58522.544169743094,
       "status": "READY"
     }
   ],
   "evidence": {
     "full": {
-      "observations": 4267,
+      "observations": 4268,
       "method": "circular block bootstrap, 20 sessions, 2000 draws",
       "sharpe_ci95": [
-        -0.171,
-        0.92
+        -0.159,
+        0.912
       ],
       "selection_adjusted": false,
       "interpretation": "Descriptive interval only; it does not correct strategy selection, repeated holdout use or data revisions.",
-      "annual_mean_excess_vs_momentum_pct": -0.898,
+      "annual_mean_excess_vs_momentum_pct": -0.9,
       "annual_mean_excess_ci95_pct": [
-        -5.389,
-        3.39
+        -5.417,
+        3.416
       ]
     },
     "reused_evaluation": {
-      "observations": 1377,
+      "observations": 1378,
       "method": "circular block bootstrap, 20 sessions, 2000 draws",
       "sharpe_ci95": [
-        0.066,
-        1.94
+        0.073,
+        1.955
       ],
       "selection_adjusted": false,
       "interpretation": "Descriptive interval only; it does not correct strategy selection, repeated holdout use or data revisions.",
-      "annual_mean_excess_vs_momentum_pct": 7.09,
+      "annual_mean_excess_vs_momentum_pct": 7.079,
       "annual_mean_excess_ci95_pct": [
-        -0.627,
-        15.027
+        -0.688,
+        14.892
       ]
     }
   },
   "benchmark": {
     "description": "Fixed 313-session momentum, both directions, seven markets, equal allocations, same cost model, volatility overlay, halt rules and 2x target cap; no parameter selection.",
     "full_metrics": {
-      "total_return_pct": 58.77,
+      "total_return_pct": 58.86,
       "cagr_pct": 3.45,
       "max_dd_pct": -23.13,
       "calmar": 0.15,
       "ann_vol_pct": 8.2,
-      "sharpe": 0.45,
+      "sharpe": 0.46,
       "pct_time_underwater": 96.5,
-      "n_days": 4267,
+      "n_days": 4268,
       "sortino": 0.62,
       "max_recovery_days": 2470,
       "rolling_sharpe_min": -2.9,
@@ -200,7 +200,7 @@
       "sharpe_first_half": 0.46,
       "sharpe_second_half": 0.45,
       "t_stat_daily": 1.68,
-      "DSR_prob_true_SR_gt_0": 0.9516
+      "DSR_prob_true_SR_gt_0": 0.9518
     }
   },
   "allocations": {
@@ -3632,8 +3632,8 @@
       "equity": 1.4188157640379213
     },
     {
-      "date": "2026-11-25",
-      "equity": 1.4125153089289049
+      "date": "2026-11-26",
+      "equity": 1.4129661109406906
     }
   ],
   "checks": [
@@ -3764,33 +3764,6 @@
     "count": 29
   },
   "fills": [
-    {
-      "date": "2026-11-13",
-      "market": "JPXJPY",
-      "price": 61229.68706562773,
-      "units_per_initial_equity": -7.918992406040944e-09,
-      "target_exposure": 0.04838968117319663,
-      "cost": 1.5837984812081887e-07,
-      "kind": "SIMULATED"
-    },
-    {
-      "date": "2026-11-15",
-      "market": "XAUUSD",
-      "price": 3873.5131183329404,
-      "units_per_initial_equity": -6.170889960748884e-06,
-      "target_exposure": -0.3479939859658256,
-      "cost": 2.776900482336998e-06,
-      "kind": "SIMULATED"
-    },
-    {
-      "date": "2026-11-15",
-      "market": "MNQ",
-      "price": 28073.148865570798,
-      "units_per_initial_equity": 1.7225282056421329e-09,
-      "target_exposure": 0.03819603156899309,
-      "cost": 2.7904956931402554e-09,
-      "kind": "SIMULATED"
-    },
     {
       "date": "2026-11-15",
       "market": "ES",
@@ -4302,6 +4275,33 @@
       "units_per_initial_equity": -9.570647607209112e-07,
       "target_exposure": 0.0,
       "cost": 1.9141295214418224e-05,
+      "kind": "SIMULATED"
+    },
+    {
+      "date": "2026-11-26",
+      "market": "EURUSD",
+      "price": 1.0959015817103324,
+      "units_per_initial_equity": -0.00340402176757916,
+      "target_exposure": -0.06625602384674888,
+      "cost": 6.127239181642488e-07,
+      "kind": "SIMULATED"
+    },
+    {
+      "date": "2026-11-26",
+      "market": "USDJPY",
+      "price": 159.17700438976883,
+      "units_per_initial_equity": -0.000968122614105765,
+      "target_exposure": -0.05565082778454332,
+      "cost": 2.4203065352644125e-05,
+      "kind": "SIMULATED"
+    },
+    {
+      "date": "2026-11-26",
+      "market": "JPXJPY",
+      "price": 57858.086079485736,
+      "units_per_initial_equity": 9.687320481536502e-07,
+      "target_exposure": 0.039813749587236394,
+      "cost": 1.9374640963073004e-05,
       "kind": "SIMULATED"
     }
   ],
